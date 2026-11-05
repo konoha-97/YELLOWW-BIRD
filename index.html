@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
-<meta name="version" content="5.0 - moeda personalizada, PT/EN e LIVE">
+<meta name="version" content="5.8 - link LIVE seguro e compartilhamento corrigido">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -268,7 +268,7 @@ const WORDS={
   pixCopied:'✅ Chave Pix copiada! Cole no aplicativo do seu banco.',pixSelect:'Cópia automática bloqueada. Toque e segure o CNPJ e escolha Copiar.',effectsFull:'Efeitos completos.',effectsReduced:'Efeitos reduzidos.',
   shareSend:'📤 ENVIAR PARA AMIGOS',shareDownload:'💾 BAIXAR',shareText:'📝 COPIAR TEXTO',
   cardReady:'Compartilhe seu cartão com os amigos!',cardSaved:'Imagem pronta para salvar!',cardError:'Não foi possível baixar a imagem.',shareTextCopied:'Texto copiado!',shareFallback:'Use BAIXAR ou COPIAR TEXTO para compartilhar.',shareMessage:'🐤 Fiz {score} pontos no YELLOWW BIRD! Você consegue superar? Jogue: {url}',
-  liveTitle:'🔴 Desafio LIVE',liveIntro:'Crie uma sala e compartilhe o link durante sua live. Seus espectadores podem jogar e disputar o ranking!',liveNickLabel:'Seu apelido',liveCreate:'🔴 CRIAR SALA',liveJoinLabel:'Tem um código? Entre na sala:',liveJoin:'ENTRAR NA SALA',liveCopy:'📋 COPIAR LINK',liveShare:'📤 DIVULGAR',livePlay:'▶ JOGAR DESAFIO',liveLeave:'SAIR DA SALA',liveEnd:'⏹ ENCERRAR SALA',liveInfo:'Os espectadores abrem o link do jogo. Para pontuações em tempo real, configure Firebase no projeto. O TikTok não é conectado automaticamente.',
+  liveTitle:'🔴 Desafio LIVE',liveIntro:'Crie uma sala e compartilhe o link durante sua live. Seus espectadores podem jogar e disputar o ranking!',liveNickLabel:'Seu apelido',liveCreate:'🔴 CRIAR SALA',liveJoinLabel:'Tem um código? Entre na sala:',liveJoin:'ENTRAR NA SALA',liveCopy:'📋 COPIAR LINK',liveShare:'📤 DIVULGAR',livePlay:'▶ JOGAR DESAFIO',liveLeave:'SAIR DA SALA',liveEnd:'⏹ ENCERRAR SALA',liveInfo:'Ranking da sala sincronizado pelo Firebase. Envie o convite curto ou o código da sala. O TikTok não se conecta automaticamente.',
   liveConfigNeeded:'Para criar salas e ranking ao vivo, configure Firebase no arquivo e publique as regras do Firestore. O jogo normal continua funcionando.',liveConnecting:'Conectando ao placar online...',liveNoConnection:'Não foi possível conectar ao serviço online. Verifique sua internet e as permissões.',liveInputCode:'Digite o código da sala.',liveInvalidCode:'Sala não encontrada ou encerrada.',liveName:'Informe seu apelido para a competição.',liveRoomOpen:'🔴 Sala ativa · {role}',liveHost:'Criador',liveGuest:'Participante',liveJoined:'Você entrou no desafio {code}!',liveCreated:'Sala {code} criada! Compartilhe o link.',liveLeft:'Você saiu da sala LIVE.',liveClosed:'O criador encerrou esta sala.',liveFinish:'Sala encerrada para novos resultados.',liveWaiting:'Aguardando jogadores...',liveResult:'Pontuação enviada ao desafio: {score} pts',liveCopySuccess:'Link copiado. Cole na bio ou no chat da live!',liveShareText:'🔴 Desafio YELLOWW BIRD! Entre na sala {code}, jogue e tente bater meu recorde: {url}',liveShareFailed:'Copie o link para divulgar!',liveStatusOffline:'🔴 Modo LIVE requer Firebase configurado.',
   rank0:'Ninho',rank1:'Ovo',rank25:'Pintinho',rank50:'Passarinho',rank100:'Pombo',rank250:'Andorinha',rank500:'Papagaio',rank1000:'Coruja',rank2500:'Águia',rank5000:'Dragão',rank10000:'Fênix',
   skin0:'Clássico',skin1:'Chama',skin2:'Menta',skin3:'Céu',skin4:'Rosa',skin5:'Neve',skin6:'Ouro',skin7:'Lilás',skin8:'Neon',skin9:'Fluorescente',
@@ -287,7 +287,7 @@ const WORDS={
   pixCopied:'✅ Pix key copied! Paste it into your banking app.',pixSelect:'Automatic copy blocked. Touch and hold the Pix key, then select Copy.',effectsFull:'Full effects enabled.',effectsReduced:'Reduced effects enabled.',
   shareSend:'📤 SHARE WITH FRIENDS',shareDownload:'💾 DOWNLOAD',shareText:'📝 COPY TEXT',
   cardReady:'Share your score card with friends!',cardSaved:'Image ready to download!',cardError:'Could not download the image.',shareTextCopied:'Text copied!',shareFallback:'Use DOWNLOAD or COPY TEXT to share.',shareMessage:'🐤 I scored {score} points in YELLOWW BIRD! Can you beat me? Play: {url}',
-  liveTitle:'🔴 LIVE Challenge',liveIntro:'Create a room and share its link during your live stream. Your viewers can play and compete on one leaderboard!',liveNickLabel:'Your nickname',liveCreate:'🔴 CREATE ROOM',liveJoinLabel:'Have a code? Join a room:',liveJoin:'JOIN ROOM',liveCopy:'📋 COPY LINK',liveShare:'📤 SHARE',livePlay:'▶ PLAY CHALLENGE',liveLeave:'LEAVE ROOM',liveEnd:'⏹ END ROOM',liveInfo:'Viewers open the game link. For live scores, configure Firebase in the project. TikTok does not connect automatically.',
+  liveTitle:'🔴 LIVE Challenge',liveIntro:'Create a room and share its link during your live stream. Your viewers can play and compete on one leaderboard!',liveNickLabel:'Your nickname',liveCreate:'🔴 CREATE ROOM',liveJoinLabel:'Have a code? Join a room:',liveJoin:'JOIN ROOM',liveCopy:'📋 COPY LINK',liveShare:'📤 SHARE',livePlay:'▶ PLAY CHALLENGE',liveLeave:'LEAVE ROOM',liveEnd:'⏹ END ROOM',liveInfo:'Live room leaderboard syncs through Firebase. Share the short link or room code. TikTok is not connected automatically.',
   liveConfigNeeded:'To create rooms and a live leaderboard, configure Firebase and deploy Firestore rules. The regular game still works.',liveConnecting:'Connecting to the online board...',liveNoConnection:'Could not connect to the online service. Check your connection and permissions.',liveInputCode:'Enter a room code.',liveInvalidCode:'Room not found or already closed.',liveName:'Enter your nickname to compete.',liveRoomOpen:'🔴 Live room · {role}',liveHost:'Host',liveGuest:'Player',liveJoined:'You joined challenge {code}!',liveCreated:'Room {code} created! Share the link.',liveLeft:'You left the LIVE room.',liveClosed:'The host ended this room.',liveFinish:'Room closed to new scores.',liveWaiting:'Waiting for players...',liveResult:'Score sent to the challenge: {score} pts',liveCopySuccess:'Link copied. Put it in your bio or live chat!',liveShareText:'🔴 YELLOWW BIRD challenge! Join room {code}, play, and beat my score: {url}',liveShareFailed:'Copy the link to share it!',liveStatusOffline:'🔴 LIVE mode needs Firebase setup.',
   rank0:'Nest',rank1:'Egg',rank25:'Chick',rank50:'Little Bird',rank100:'Pigeon',rank250:'Swallow',rank500:'Parrot',rank1000:'Owl',rank2500:'Eagle',rank5000:'Dragon',rank10000:'Phoenix',
   skin0:'Classic',skin1:'Flame',skin2:'Mint',skin3:'Sky',skin4:'Pink',skin5:'Snow',skin6:'Gold',skin7:'Lilac',skin8:'Neon',skin9:'Fluorescent',
@@ -674,10 +674,11 @@ let lastFrame=0;function loop(ms){if(!lastFrame)lastFrame=ms;let dt=Math.min((ms
 // Sem Firebase NÃO há sala ou ranking global simulado.
 let live=null,liveRows=[],liveRequest=0,liveBusy=false;
 const liveQueryCode=(queryParams.get('live')||'').replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,8);
+// URL pública fixa: nunca copiar fragmentos #tgWebAppData, hash, dados pessoais ou tokens do Telegram.
+const PUBLIC_GAME_URL='https://konoha-97.github.io/YELLOWW-BIRD/';
 function liveURL(code){
- const url=new URL((location.protocol==='https:'||location.hostname==='localhost')?location.href:SHARE_URL);
- url.searchParams.set('live',code);
- url.searchParams.delete('v');url.searchParams.delete('lang');
+ const url=new URL(PUBLIC_GAME_URL);
+ url.searchParams.set('live',String(code).toUpperCase());
  return url.toString();
 }
 function randomRoomCode(){
@@ -789,11 +790,16 @@ async function publishLiveResult(score){
   if(live?.code===code)toast(t('liveResult',{score}));
  }catch(err){console.warn('Não foi possível enviar pontos ao desafio:',err);toast(t('liveNoConnection'));}
 }
-async function copyLiveLink(){
+function copyLiveLink(){
  if(!live)return;
  const url=liveURL(live.code);
- try{await navigator.clipboard.writeText(url);toast(t('liveCopySuccess'));}
- catch(_){window.prompt(t('liveCopy'),url);}
+ // Usa também o método compatível que já resolveu a cópia Pix no Android.
+ if(copyPixLegacy(url)){toast(t('liveCopySuccess'));return;}
+ if(navigator.clipboard?.writeText){
+  navigator.clipboard.writeText(url)
+   .then(()=>toast(t('liveCopySuccess')))
+   .catch(()=>window.prompt(t('liveCopy'),url));
+ }else window.prompt(t('liveCopy'),url);
 }
 async function shareLiveLink(){
  if(!live)return;
@@ -872,8 +878,8 @@ $('btnSave').addEventListener('click',async()=>{
  await showRanking('over');
 });
 // Gera o cartão como IMAGEM ORIGINAL, sem dependência de serviços ou bibliotecas.
-const PUBLIC_GAME_URL='https://focusaudiobr-blip.github.io/Flappy-Passaro/';
-const SHARE_URL=((()=>{try{if(/^https?:$/.test(location.protocol)){const u=new URL(location.href);u.hash='';u.search='';return u.toString();}}catch(_){}return PUBLIC_GAME_URL;})());
+// Compartilhamento de resultados usa apenas a página pública principal, sem dados de sessão.
+const SHARE_URL=PUBLIC_GAME_URL;
 let shareCanvas=null;
 function drawShareCard(){
  const cv=document.createElement('canvas');cv.width=900;cv.height=1200;
