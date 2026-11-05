@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
-<meta name="version" content="5.8 - link LIVE seguro e compartilhamento corrigido">
+<meta name="version" content="5.11 - ranking global e apelido de sala independentes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -109,6 +109,28 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
 .share-preview{display:block;width:auto;height:auto;max-width:min(75vw,290px);max-height:43dvh;object-fit:contain;border-radius:15px;border:2px solid #ffffff33;box-shadow:0 10px 28px #0009;background:#19253b}
 #screenShare{gap:10px}#shareHint{color:var(--yellow);font-weight:800}
 @media (max-height:690px){.screen{gap:8px;padding-top:55px;padding-bottom:9px}#screenMenu{justify-content:flex-start;padding-top:calc(env(safe-area-inset-top,0px) + 65px)}.logo-bird{width:min(35vw,135px);max-height:22dvh}.screen h1{font-size:30px}.screen p{font-size:12px}.btn{min-height:43px;padding:8px}.medal{height:44px;width:44px;font-size:23px}.score-big{font-size:48px}.missions{gap:3px}.mission{padding:5px 8px}.ach-list{max-height:50dvh}}
+
+.build-version{display:block;flex:none;color:#c9d2df9c;font-size:10px;letter-spacing:.25px;margin-top:4px}
+.global-profile{width:100%;max-width:340px;flex:none;display:flex;flex-direction:column;gap:7px;text-align:left;background:#16253bdf;border:1px solid #a5b8cf44;border-radius:13px;padding:12px}
+.global-profile label{font-size:12px;color:#eef5fd;font-weight:800}
+.global-profile-row{display:flex;gap:7px;width:100%}
+.global-profile-row input{flex:1;min-width:0;border-radius:9px;border:1px solid #778dab;background:#101a2e;color:#fff;font:600 15px system-ui;padding:10px 9px;user-select:text}
+.global-profile-row button{border:0;border-radius:9px;background:#ffdb39;color:#192333;font-size:12px;font-weight:900;padding:8px;cursor:pointer}
+.global-profile p{font-size:10px;line-height:1.4;color:#b7c7db;text-align:left}
+
+/* V5.12: celebração das grandes conquistas sem alterar telas existentes. */
+.grand-celebration{position:absolute;inset:0;z-index:32;display:none;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 18px) 20px calc(env(safe-area-inset-bottom,0px) + 18px);background:rgba(9,19,38,.94);backdrop-filter:blur(6px);overflow-y:auto;text-align:center}
+.grand-celebration.show{display:flex}
+.grand-celebration-content{width:100%;max-width:330px;display:flex;flex-direction:column;align-items:center;gap:11px}
+.grand-celebration-icon{font-size:clamp(64px,15vw,110px);line-height:1.2;filter:drop-shadow(0 0 18px #ffe15a88);animation:grand-pop .5s cubic-bezier(.2,1.3,.4,1) both}
+.grand-celebration-title{color:#ffdb39;font-weight:950;letter-spacing:1.2px;font-size:13px}
+.grand-celebration-name{font-size:clamp(27px,8vw,38px);font-weight:950;line-height:1.1}
+.grand-celebration-desc{font-size:14px;color:#bdc8db;line-height:1.5}
+.grand-celebration-reward{display:flex;align-items:center;justify-content:center;gap:5px;color:#ffdb39;font-weight:900;font-size:19px;margin:6px 0 12px}
+.grand-celebration .btn{flex:none}
+@keyframes grand-pop{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
+.reduced-fx .grand-celebration-icon{animation:none;filter:none}
+@media (prefers-reduced-motion:reduce){.grand-celebration-icon{animation:none}}
 </style>
 </head>
 <body>
@@ -137,13 +159,15 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
    <button class="lang-toggle" id="btnLanguage" aria-label="Mudar idioma">🌐 EN</button>
   </div>
   <div class="missions" id="missionsBox"></div>
+  <small class="build-version" id="buildVersion">v5.12 · Efeitos suaves</small>
  </section>
  <section class="screen" id="screenOver">
   <div class="medal" id="medalBox">🐣</div><div class="score-label" data-i18n="scoreLabel">Sua pontuação</div><div class="score-big" id="finalScore">0</div>
   <div class="rank-pill" id="overRank">🪖 Recruta</div>
   <p id="overMsg">Salve seu resultado para aparecer no ranking.</p>
   <p id="nextAch" class="next-ach"></p>
-  <input id="nickInput" maxlength="15" autocomplete="nickname" placeholder="Seu apelido" aria-label="Seu apelido">
+   <p class="subtle" data-i18n="globalNickSaveHint">Nome usado no ranking global (independente do nome da sala LIVE).</p>
+   <input id="nickInput" maxlength="15" autocomplete="nickname" placeholder="Seu apelido" aria-label="Seu apelido">
   <button class="btn" id="btnSave" data-i18n="saveScore">🏆 SALVAR PONTUAÇÃO</button>
   <div class="btn-row"><button class="btn secondary" id="btnRetry" data-i18n="retry">↻ DE NOVO</button><button class="btn secondary" id="btnShare" data-i18n="shareBtn">📤 COMPARTILHAR</button></div>
   <button class="btn secondary" id="btnMenu" data-i18n="menu">⌂ MENU</button>
@@ -151,8 +175,13 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
  <section class="screen" id="screenRanking">
   <h1 data-i18n="rankingTitle">🏆 Ranking</h1><span class="tag" id="rankLabel">Ranking deste aparelho</span>
   <div class="list" id="rankList" aria-live="polite"></div>
-  <p id="rankMyPos" class="subtle"></p>
-  <button class="btn secondary" id="btnBackRank" data-i18n="back">← VOLTAR</button>
+   <p id="rankMyPos" class="subtle"></p>
+   <div class="global-profile" id="globalProfile">
+    <label for="globalNickInput" data-i18n="globalNickLabel">Apelido do ranking global</label>
+    <div class="global-profile-row"><input id="globalNickInput" maxlength="15" autocomplete="nickname" placeholder="Apelido global"><button type="button" id="btnGlobalNick" data-i18n="globalNickSave">Salvar nome</button></div>
+    <p data-i18n="globalNickHint">Este apelido é separado do usado nas salas LIVE. Alterar o nome mantém o recorde da mesma conta.</p>
+   </div>
+   <button class="btn secondary" id="btnBackRank" data-i18n="back">← VOLTAR</button>
  </section>
  <section class="screen" id="screenAchievements">
   <h1 data-i18n="achievementsTitle">🏅 Conquistas</h1>
@@ -179,7 +208,7 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
   <h1 data-i18n="liveTitle">🔴 Desafio LIVE</h1>
   <p data-i18n="liveIntro">Crie uma sala e compartilhe o link durante sua live. Seus espectadores podem jogar e disputar o ranking!</p>
   <div class="live-card" id="liveSetup">
-   <label class="live-status" for="liveNick" data-i18n="liveNickLabel">Seu apelido</label>
+   <label class="live-status" for="liveNick" data-i18n="liveNickLabel">Apelido só desta sala (não altera o ranking global)</label>
    <input class="live-field" id="liveNick" maxlength="15" placeholder="Seu apelido" autocomplete="nickname">
    <button class="btn" id="btnLiveCreate" data-i18n="liveCreate">🔴 CRIAR SALA</button>
    <label class="live-status" for="liveJoinCode" data-i18n="liveJoinLabel">Tem um código? Entre na sala:</label>
@@ -207,6 +236,16 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
   <button class="btn secondary" id="btnShareBack" data-i18n="back" style="max-width:320px">← VOLTAR</button>
  </section>
  <div class="ach-banner" id="achBanner" aria-live="polite"><span class="ach-banner-icon" id="achBannerIcon">🏅</span><div class="ach-banner-text"><small data-i18n="achievementUnlocked">CONQUISTA DESBLOQUEADA</small><span id="achBannerName">Conquista</span><small id="achBannerCoins">+0 moedas</small></div></div>
+<div class="grand-celebration" id="grandCelebration" role="dialog" aria-modal="true" aria-labelledby="grandName" aria-hidden="true">
+  <div class="grand-celebration-content">
+   <div class="grand-celebration-icon" id="grandIcon">🏆</div>
+   <div class="grand-celebration-title" id="grandTitle">CONQUISTA ESPECIAL!</div>
+   <div class="grand-celebration-name" id="grandName">Conquista</div>
+   <div class="grand-celebration-desc" id="grandDesc"></div>
+   <div class="grand-celebration-reward" id="grandReward"></div>
+   <button class="btn" id="btnGrandContinue" type="button">CONTINUAR</button>
+  </div>
+ </div>
  <div class="toast" id="toast"></div>
 </div></div>
 <script type="module">
@@ -237,11 +276,24 @@ try { tg?.ready(); tg?.expand(); tg?.setHeaderColor('#111827'); tg?.setBackgroun
 
 // Storage protegido: navegadores privados podem bloquear localStorage.
 const K = 'yellowflap.v3';
-const freshStore = () => ({best:0,coins:0,nick:'',skin:0,owned:[0],muted:false,plays:0,pipes:0,localScores:[],missions:null,reduceFx:false,streak:0,lastDay:null,achievements:[],shares:0,noPipeDeaths:0,fastDeaths:0,rocketeerRuns:0});
-function readStore(){try{
- const raw=JSON.parse(localStorage.getItem(K)||'null');
- return {...freshStore(),...(raw && typeof raw==='object' ? raw : {})};
-}catch(_){return freshStore();}}
+// v5.9: ajuste único de cor para instalações vindas de versões anteriores.
+// Não remove skins compradas, moedas, recordes, conquistas ou outros dados.
+const SKIN_STARTUP_VERSION = 1;
+const freshStore = () => ({best:0,coins:0,nick:'',liveNick:'',skin:0,skinStartupVersion:SKIN_STARTUP_VERSION,owned:[0],muted:false,plays:0,pipes:0,localScores:[],missions:null,reduceFx:false,streak:0,lastDay:null,achievements:[],shares:0,noPipeDeaths:0,fastDeaths:0,rocketeerRuns:0});
+function readStore(){
+ try {
+  const parsed=JSON.parse(localStorage.getItem(K)||'null');
+  const old=parsed && typeof parsed==='object' && !Array.isArray(parsed) ? parsed : null;
+  const saved={...freshStore(),...(old||{})};
+  // Uma única vez, reequipe o Clássico para corrigir cores herdadas de versões antigas.
+  // Todas as skins desbloqueadas continuam disponíveis na loja.
+  if(old && old.skinStartupVersion !== SKIN_STARTUP_VERSION){
+   saved.skin=0;
+   saved.skinStartupVersion=SKIN_STARTUP_VERSION;
+  }
+  return saved;
+ } catch(_) { return freshStore(); }
+}
 let store=readStore();
 if(!Array.isArray(store.owned))store.owned=[0];
 if(!Array.isArray(store.localScores))store.localScores=[];
@@ -251,6 +303,8 @@ store.coins = Math.max(0, Number(store.coins)||0);
 if (!store.owned.includes(0)) store.owned.unshift(0);
 if (!Number.isInteger(store.skin) || !store.owned.includes(store.skin)) store.skin = 0;
 const persist=()=>{try{localStorage.setItem(K,JSON.stringify(store))}catch(_){}};
+// Grave a migração antes da primeira partida; não altere novamente a seleção manual.
+persist();
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 // Internacionalização: preferência gravada no mesmo armazenamento existente.
 const WORDS={
@@ -268,9 +322,11 @@ const WORDS={
   pixCopied:'✅ Chave Pix copiada! Cole no aplicativo do seu banco.',pixSelect:'Cópia automática bloqueada. Toque e segure o CNPJ e escolha Copiar.',effectsFull:'Efeitos completos.',effectsReduced:'Efeitos reduzidos.',
   shareSend:'📤 ENVIAR PARA AMIGOS',shareDownload:'💾 BAIXAR',shareText:'📝 COPIAR TEXTO',
   cardReady:'Compartilhe seu cartão com os amigos!',cardSaved:'Imagem pronta para salvar!',cardError:'Não foi possível baixar a imagem.',shareTextCopied:'Texto copiado!',shareFallback:'Use BAIXAR ou COPIAR TEXTO para compartilhar.',shareMessage:'🐤 Fiz {score} pontos no YELLOWW BIRD! Você consegue superar? Jogue: {url}',
-  liveTitle:'🔴 Desafio LIVE',liveIntro:'Crie uma sala e compartilhe o link durante sua live. Seus espectadores podem jogar e disputar o ranking!',liveNickLabel:'Seu apelido',liveCreate:'🔴 CRIAR SALA',liveJoinLabel:'Tem um código? Entre na sala:',liveJoin:'ENTRAR NA SALA',liveCopy:'📋 COPIAR LINK',liveShare:'📤 DIVULGAR',livePlay:'▶ JOGAR DESAFIO',liveLeave:'SAIR DA SALA',liveEnd:'⏹ ENCERRAR SALA',liveInfo:'Ranking da sala sincronizado pelo Firebase. Envie o convite curto ou o código da sala. O TikTok não se conecta automaticamente.',
+  globalNickSaveHint:'Nome usado no ranking global (independente da sala LIVE).',globalNickLabel:'Apelido do ranking global',globalNickSave:'SALVAR NOME',globalNickHint:'Este nome é separado do utilizado nas salas LIVE. A alteração não apaga seu recorde.',globalNickSaved:'✅ Nome do ranking global atualizado!',globalNickLocal:'Nome salvo neste aparelho; o Firebase ainda está indisponível.',globalNickError:'Não foi possível atualizar o nome online.',globalNickUpdating:'SALVANDO...',
+   liveTitle:'🔴 Desafio LIVE',liveIntro:'Crie uma sala e compartilhe o link durante sua live. Seus espectadores podem jogar e disputar o ranking!',liveNickLabel:'Apelido só desta sala (não altera o ranking global)',liveCreate:'🔴 CRIAR SALA',liveJoinLabel:'Tem um código? Entre na sala:',liveJoin:'ENTRAR NA SALA',liveCopy:'📋 COPIAR LINK',liveShare:'📤 DIVULGAR',livePlay:'▶ JOGAR DESAFIO',liveLeave:'SAIR DA SALA',liveEnd:'⏹ ENCERRAR SALA',liveInfo:'Ranking da sala sincronizado pelo Firebase. Envie o convite curto ou o código da sala. O TikTok não se conecta automaticamente.',
   liveConfigNeeded:'Para criar salas e ranking ao vivo, configure Firebase no arquivo e publique as regras do Firestore. O jogo normal continua funcionando.',liveConnecting:'Conectando ao placar online...',liveNoConnection:'Não foi possível conectar ao serviço online. Verifique sua internet e as permissões.',liveInputCode:'Digite o código da sala.',liveInvalidCode:'Sala não encontrada ou encerrada.',liveName:'Informe seu apelido para a competição.',liveRoomOpen:'🔴 Sala ativa · {role}',liveHost:'Criador',liveGuest:'Participante',liveJoined:'Você entrou no desafio {code}!',liveCreated:'Sala {code} criada! Compartilhe o link.',liveLeft:'Você saiu da sala LIVE.',liveClosed:'O criador encerrou esta sala.',liveFinish:'Sala encerrada para novos resultados.',liveWaiting:'Aguardando jogadores...',liveResult:'Pontuação enviada ao desafio: {score} pts',liveCopySuccess:'Link copiado. Cole na bio ou no chat da live!',liveShareText:'🔴 Desafio YELLOWW BIRD! Entre na sala {code}, jogue e tente bater meu recorde: {url}',liveShareFailed:'Copie o link para divulgar!',liveStatusOffline:'🔴 Modo LIVE requer Firebase configurado.',
-  rank0:'Ninho',rank1:'Ovo',rank25:'Pintinho',rank50:'Passarinho',rank100:'Pombo',rank250:'Andorinha',rank500:'Papagaio',rank1000:'Coruja',rank2500:'Águia',rank5000:'Dragão',rank10000:'Fênix',
+   grandTitle:'🎉 GRANDE CONQUISTA!',grandContinue:'CONTINUAR',grandReward:'+{count} moedas',
+   rank0:'Ninho',rank1:'Ovo',rank25:'Pintinho',rank50:'Passarinho',rank100:'Pombo',rank250:'Andorinha',rank500:'Papagaio',rank1000:'Coruja',rank2500:'Águia',rank5000:'Dragão',rank10000:'Fênix',
   skin0:'Clássico',skin1:'Chama',skin2:'Menta',skin3:'Céu',skin4:'Rosa',skin5:'Neve',skin6:'Ouro',skin7:'Lilás',skin8:'Neon',skin9:'Fluorescente',
   mission_pipes10:'Passe 10 canos hoje',mission_games3:'Jogue 3 vezes hoje',mission_score8:'Faça 8 pontos em uma partida',
  },
@@ -287,9 +343,11 @@ const WORDS={
   pixCopied:'✅ Pix key copied! Paste it into your banking app.',pixSelect:'Automatic copy blocked. Touch and hold the Pix key, then select Copy.',effectsFull:'Full effects enabled.',effectsReduced:'Reduced effects enabled.',
   shareSend:'📤 SHARE WITH FRIENDS',shareDownload:'💾 DOWNLOAD',shareText:'📝 COPY TEXT',
   cardReady:'Share your score card with friends!',cardSaved:'Image ready to download!',cardError:'Could not download the image.',shareTextCopied:'Text copied!',shareFallback:'Use DOWNLOAD or COPY TEXT to share.',shareMessage:'🐤 I scored {score} points in YELLOWW BIRD! Can you beat me? Play: {url}',
-  liveTitle:'🔴 LIVE Challenge',liveIntro:'Create a room and share its link during your live stream. Your viewers can play and compete on one leaderboard!',liveNickLabel:'Your nickname',liveCreate:'🔴 CREATE ROOM',liveJoinLabel:'Have a code? Join a room:',liveJoin:'JOIN ROOM',liveCopy:'📋 COPY LINK',liveShare:'📤 SHARE',livePlay:'▶ PLAY CHALLENGE',liveLeave:'LEAVE ROOM',liveEnd:'⏹ END ROOM',liveInfo:'Live room leaderboard syncs through Firebase. Share the short link or room code. TikTok is not connected automatically.',
+  globalNickSaveHint:'Name used on the global leaderboard (separate from LIVE rooms).',globalNickLabel:'Global leaderboard nickname',globalNickSave:'SAVE NAME',globalNickHint:'This nickname is separate from your LIVE room nickname. Renaming does not erase your best score.',globalNickSaved:'✅ Global nickname updated!',globalNickLocal:'Name saved on this device; Firebase is currently unavailable.',globalNickError:'Could not update your online nickname.',globalNickUpdating:'SAVING...',
+   liveTitle:'🔴 LIVE Challenge',liveIntro:'Create a room and share its link during your live stream. Your viewers can play and compete on one leaderboard!',liveNickLabel:'Room nickname (does not change global leaderboard)',liveCreate:'🔴 CREATE ROOM',liveJoinLabel:'Have a code? Join a room:',liveJoin:'JOIN ROOM',liveCopy:'📋 COPY LINK',liveShare:'📤 SHARE',livePlay:'▶ PLAY CHALLENGE',liveLeave:'LEAVE ROOM',liveEnd:'⏹ END ROOM',liveInfo:'Live room leaderboard syncs through Firebase. Share the short link or room code. TikTok is not connected automatically.',
   liveConfigNeeded:'To create rooms and a live leaderboard, configure Firebase and deploy Firestore rules. The regular game still works.',liveConnecting:'Connecting to the online board...',liveNoConnection:'Could not connect to the online service. Check your connection and permissions.',liveInputCode:'Enter a room code.',liveInvalidCode:'Room not found or already closed.',liveName:'Enter your nickname to compete.',liveRoomOpen:'🔴 Live room · {role}',liveHost:'Host',liveGuest:'Player',liveJoined:'You joined challenge {code}!',liveCreated:'Room {code} created! Share the link.',liveLeft:'You left the LIVE room.',liveClosed:'The host ended this room.',liveFinish:'Room closed to new scores.',liveWaiting:'Waiting for players...',liveResult:'Score sent to the challenge: {score} pts',liveCopySuccess:'Link copied. Put it in your bio or live chat!',liveShareText:'🔴 YELLOWW BIRD challenge! Join room {code}, play, and beat my score: {url}',liveShareFailed:'Copy the link to share it!',liveStatusOffline:'🔴 LIVE mode needs Firebase setup.',
-  rank0:'Nest',rank1:'Egg',rank25:'Chick',rank50:'Little Bird',rank100:'Pigeon',rank250:'Swallow',rank500:'Parrot',rank1000:'Owl',rank2500:'Eagle',rank5000:'Dragon',rank10000:'Phoenix',
+   grandTitle:'🎉 MAJOR ACHIEVEMENT!',grandContinue:'CONTINUE',grandReward:'+{count} coins',
+   rank0:'Nest',rank1:'Egg',rank25:'Chick',rank50:'Little Bird',rank100:'Pigeon',rank250:'Swallow',rank500:'Parrot',rank1000:'Owl',rank2500:'Eagle',rank5000:'Dragon',rank10000:'Phoenix',
   skin0:'Classic',skin1:'Flame',skin2:'Mint',skin3:'Sky',skin4:'Pink',skin5:'Snow',skin6:'Gold',skin7:'Lilac',skin8:'Neon',skin9:'Fluorescent',
   mission_pipes10:'Clear 10 pipes today',mission_games3:'Play 3 games today',mission_score8:'Score 8 points in one game',
  }
@@ -323,7 +381,7 @@ function applyLanguage(){
  $('btnRanking').setAttribute('aria-label',t('rankingShort'));$('btnAchievements').setAttribute('aria-label',t('achievementsShort'));$('btnShop').setAttribute('aria-label',t('shopShort'));
  $('btnRanking').title=t('rankingShort');$('btnAchievements').title=t('achievementsShort');$('btnShop').title=t('shopShort');
  $('btnLiveLeave').textContent=t(live?.host?'liveEnd':'liveLeave');
- updateHud();renderMissions();if(G.screen==='shop')renderShop();if(G.screen==='achievements')renderAchievements();if(G.screen==='ranking')showRanking();if(G.screen==='live')renderLive();
+ updateHud();renderMissions();if(G.screen==='shop')renderShop();if(G.screen==='achievements')renderAchievements();if(G.screen==='ranking')showRanking();if(G.screen==='live')renderLive();if(grandActive)showGrandCelebration(grandActive);
 }
 function setLanguage(value){language=value;store.lang=value;persist();applyLanguage();}
 
@@ -355,7 +413,7 @@ function updateHud(){
  $('menuCoins').replaceChildren(coinIcon(),document.createTextNode(` ${formatCoins(store.coins)} ${t('coins')} · 🏆 ${t('record')} ${store.best}${streak}`));
  showCoinBalance('shopCoins',`${formatCoins(store.coins)} ${t('coins')}`);
  writeText('muteBtn',store.muted?'🔇':'🔊');
- writeText('btnFx',t(store.reduceFx?'fxReduced':'fxFull'));
+ writeText('btnFx',t(store.reduceFx?'fxReduced':'fxFull'));stage.classList.toggle('reduced-fx',!!store.reduceFx);
  renderRankPills();
 }
 
@@ -426,6 +484,7 @@ function drawRankRows(rows,me,online){
 async function showRanking(from=null){
  if(from)rankSource=from;
  G.screen='ranking';setScreen('ranking');
+ $('globalNickInput').value=store.nick||'';
  const req=++rankReq;
  const local=localRows();
  if(cloudStatus==='online'){
@@ -497,11 +556,45 @@ function checkAchievements(silent=false){
  let changed=false;
  for(const a of ACHIEVEMENTS){if(store.achievements.includes(a.id)||achProgress(a)<a.score)continue;
   store.achievements.push(a.id);store.coins+=a.coins;changed=true;
-  if(!silent)enqueueAchievement(a);
+  if(!silent){enqueueAchievement(a);if(a.score>=500)queueGrandCelebration(a);}
  }
  if(changed){persist();updateHud();}
  if(G.screen==='achievements')renderAchievements();
 }
+// V5.12: grandes conquistas (500+), em fila, somente fora de partidas.
+const grandQueue=[];
+let grandActive=null,grandTrigger=null;
+function queueGrandCelebration(a){
+ if(a.score<500 || grandQueue.some(x=>x.id===a.id) || grandActive?.id===a.id)return;
+ grandQueue.push(a);
+}
+function processGrandCelebration(){
+ if(grandActive || !grandQueue.length || G.screen==='playing')return;
+ showGrandCelebration(grandQueue.shift());
+}
+function showGrandCelebration(a){
+ grandActive=a;
+ writeText('grandIcon',a.icon);
+ writeText('grandTitle',t('grandTitle'));
+ writeText('grandName',achName(a));
+ writeText('grandDesc',achDesc(a));
+ $('grandReward').replaceChildren(coinIcon(),document.createTextNode(' '+t('grandReward',{count:fmt(a.coins)})));
+ writeText('btnGrandContinue',t('grandContinue'));
+ $('grandCelebration').classList.add('show');
+ $('grandCelebration').setAttribute('aria-hidden','false');
+ $('btnGrandContinue').focus({preventScroll:true});
+ if(!store.reduceFx){
+  for(const [i,f] of [523,784,1047,1319].entries())setTimeout(()=>{if(grandActive===a)audio(f,.13,'sine');},i*100);
+ }
+}
+function hideGrandCelebration(){
+ $('grandCelebration').classList.remove('show');
+ $('grandCelebration').setAttribute('aria-hidden','true');
+ grandActive=null;
+ if(grandQueue.length)setTimeout(processGrandCelebration,220);
+}
+$('btnGrandContinue').addEventListener('click',hideGrandCelebration);
+
 function renderAchievements(){
  const list=$('achList');list.replaceChildren();
  writeText('achCount',t('achCount',{count:ACHIEVEMENTS.filter(a=>store.achievements.includes(a.id)).length,total:ACHIEVEMENTS.length}));
@@ -521,7 +614,7 @@ function renderAchievements(){
  }
  renderRankPills();
 }
-function showAchievements(){G.screen='achievements';setScreen('achievements');renderAchievements();}
+function showAchievements(){G.screen='achievements';setScreen('achievements');renderAchievements();processGrandCelebration();}
 function markShared(){store.shares=(store.shares||0)+1;persist();checkAchievements();}
 
 // Missões diárias com progresso persistido.
@@ -579,20 +672,20 @@ let audioCtx;function audio(freq,duration=.08,type='sine'){
  }catch(_){}}
 
 let W=360,H=640,DPR=1;
-const G={screen:'menu',score:0,t:0,over:false,bird:{x:90,y:300,vy:0,rot:0,trail:[]},pipes:[],particles:[],clouds:[],pipeTimer:0,speed:145,gap:170,night:false,groundX:0};
+const G={screen:'menu',score:0,t:0,over:false,bird:{x:90,y:300,vy:0,rot:0,trail:[]},pipes:[],particles:[],clouds:[],pipeTimer:0,speed:145,gap:170,night:false,groundX:0,flash:0,shake:0};
 function resize(){const rect=stage.getBoundingClientRect();W=Math.max(280,rect.width);H=Math.max(350,rect.height);DPR=Math.min(2,window.devicePixelRatio||1);
  canvas.width=Math.round(rect.width*DPR);canvas.height=Math.round(rect.height*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);
  if(G.screen!=='playing'){G.bird.x=W*.27;G.bird.y=H*.43;}
 }
 window.addEventListener('resize',resize);
 const groundY=()=>H-72;
-function worldReset(){G.score=0;G.over=false;G.t=0;G.pipeTimer=0;G.speed=Math.max(145,W*.38);G.gap=Math.max(155,Math.min(200,H*.25));G.night=false;G.groundX=0;G.pipes=[];G.particles=[];G.floatingCoins=[];
+function worldReset(){G.score=0;G.over=false;G.t=0;G.pipeTimer=0;G.speed=Math.max(145,W*.38);G.gap=Math.max(165,Math.min(200,H*.25));G.night=false;G.groundX=0;G.flash=0;G.shake=0;G.pipes=[];G.particles=[];G.floatingCoins=[];
  G.bird={x:W*.27,y:H*.43,vy:0,rot:0,trail:[]};G.clouds=Array.from({length:5},()=>({x:Math.random()*W,y:45+Math.random()*H*.47,s:18+Math.random()*20,v:9+Math.random()*14}));updateHud();}
 function setScreen(screen){$('liveHud').classList.toggle('active',!!live&&screen==='playing');for(const name of ['menu','over','ranking','shop','share','achievements','live'])$('screen'+name[0].toUpperCase()+name.slice(1)).classList.toggle('active',screen===name);}
-function menu(){G.screen='menu';setScreen('menu');resetDisplay();}
+function menu(){G.screen='menu';setScreen('menu');resetDisplay();processGrandCelebration();}
 function resetDisplay(){updateHud();renderMissions();}
 function start(){worldReset();G.screen='playing';setScreen('playing');updateLiveHud();markPlayedToday();missionProgress('games',1);store.plays++;persist();checkAchievements();jump();}
-function jump(){if(G.screen!=='playing')return;G.bird.vy=-Math.max(260,Math.min(325,H*.46));G.bird.rot=-.5;audio(510,.055,'square');}
+function jump(){if(G.screen!=='playing')return;G.bird.vy=-Math.max(260,Math.min(325,H*.46));G.bird.rot=-.5;addFeathers(G.bird.x-13,G.bird.y+7,4);audio(510,.055,'square');}
 function spawnPipe(){
  const usable=groundY();const gap=G.gap;
  const topLimit=Math.max(62,usable*.16),bottomLimit=usable-80;
@@ -600,10 +693,21 @@ function spawnPipe(){
  G.pipes.push({x:W+20,y:center,gap,w:Math.max(58,W*.145),scored:false});
 }
 function addParticles(x,y,color,n=8){if(store.reduceFx)n=Math.max(2,Math.ceil(n/2));for(let i=0;i<n;i++)G.particles.push({x,y,vx:(Math.random()-.5)*130,vy:(Math.random()-.5)*130,life:.5,color,size:2+Math.random()*3});}
+function addFeathers(x,y,n=5,impact=false){
+ const count=store.reduceFx?Math.max(1,Math.ceil(n/2)):n;
+ for(let i=0;i<count;i++){
+  if(G.particles.length>100)break;
+  const life=(impact?.85:.55)+Math.random()*.35;
+  G.particles.push({kind:'feather',x,y,vx:-45+(Math.random()-.5)*(impact?185:95),
+   vy:(impact?-85:-25)+(Math.random()-.5)*90,life,initialLife:life,
+   angle:Math.random()*Math.PI*2,spin:(Math.random()-.5)*8,
+   size:2.5+Math.random()*3,color:birdColor()});
+ }
+}
 function gameOver(){if(G.screen!=='playing')return;
  const wasRecord=G.score>store.best;
  if(live)publishLiveResult(G.score);
- G.screen='over';G.over=true;audio(160,.22,'sawtooth');addParticles(G.bird.x,G.bird.y,'#ffda25',15);
+ G.screen='over';G.over=true;audio(160,.22,'sawtooth');addParticles(G.bird.x,G.bird.y,'#dbc28b',8);addFeathers(G.bird.x,G.bird.y,9,true);G.bird.vy=Math.max(G.bird.vy,50);if(!store.reduceFx){G.flash=.15;G.shake=wasRecord?5:3;}
  if(G.score===0)store.noPipeDeaths=(store.noPipeDeaths||0)+1;else store.noPipeDeaths=0;
  if(G.t<1)store.fastDeaths=(store.fastDeaths||0)+1;
  store.best=Math.max(store.best,G.score);store.coins+=G.score;persist();missionProgress('best',G.score);checkAchievements();
@@ -612,22 +716,24 @@ function gameOver(){if(G.screen!=='playing')return;
  writeText('finalScore',fmt(G.score));writeText('medalBox',G.score>=30?'💎':G.score>=20?'🥇':G.score>=10?'🥈':G.score>=5?'🥉':'🐣');
  $('medalBox').classList.toggle('record',wasRecord);
  writeText('overMsg',G.score===0?t('overZero'):(language==='pt'&&G.score===1?'Você passou por 1 cano e ganhou 1 moeda!':t('overScore',{count:G.score})));
- $('nickInput').value=store.nick||'';$('btnSave').disabled=false;writeText('btnSave',t('saveScore'));updateHud();setScreen('over');}
+ $('nickInput').value=store.nick||'';$('btnSave').disabled=false;writeText('btnSave',t('saveScore'));updateHud();setScreen('over');setTimeout(processGrandCelebration,430);}
 function move(dt){
- G.t+=dt;G.groundX=(G.groundX+dt*G.speed)%36;
+ G.t+=dt;G.groundX=(G.groundX+dt*G.speed)%36;G.flash=Math.max(0,G.flash-dt);G.shake=Math.max(0,G.shake-dt*14);
  for(const cloud of G.clouds){cloud.x-=dt*cloud.v;if(cloud.x< -110)cloud.x=W+80;}
- for(let i=G.particles.length-1;i>=0;i--){const p=G.particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=240*dt;p.life-=dt;if(p.life<=0)G.particles.splice(i,1);}
+ for(let i=G.particles.length-1;i>=0;i--){const p=G.particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=240*dt;if(p.kind==='feather')p.angle+=p.spin*dt;p.life-=dt;if(p.life<=0)G.particles.splice(i,1);}
  for(let i=G.floatingCoins.length-1;i>=0;i--){const c=G.floatingCoins[i];c.y-=dt*45;c.life-=dt;if(c.life<=0)G.floatingCoins.splice(i,1);}
- if(G.screen!=='playing'){if(G.screen==='menu')G.bird.y=H*.43+Math.sin(G.t*3)*6;return;}
+ if(G.screen!=='playing'){if(G.screen==='menu')G.bird.y=H*.43+Math.sin(G.t*3)*6;else if(G.screen==='over'&&G.over){const b=G.bird,limit=groundY()-14;if(b.y<limit){b.vy+=760*dt;b.y=Math.min(limit,b.y+b.vy*dt);b.rot=clamp(b.rot+dt*1.8,-.6,1.48);}else{b.y=limit;b.vy=0;}}return;}
  const b=G.bird;b.vy+=870*dt;b.y+=b.vy*dt;b.rot=clamp(b.vy/480,-.6,1.05);
  b.trail.push({x:b.x-12,y:b.y+4});if(b.trail.length>12)b.trail.shift();
  G.pipeTimer+=dt;
  if(G.pipeTimer>1.35){G.pipeTimer-=1.35;spawnPipe();}
- G.speed=Math.max(145,W*.38)+Math.min(G.score*2.4,70);
- G.gap=Math.max(146,Math.max(155,Math.min(200,H*.25))-Math.min(G.score*.9,26));
+ // Curva V5.12: velocidade e abertura variam de forma mais gradual.
+ G.speed=Math.max(145,W*.38)+Math.min(G.score*1.0,55);
+ const baseGap=Math.max(165,Math.min(200,H*.25));
+ G.gap=Math.max(165,baseGap-Math.min(G.score*.30,22));
  const r=13;
  for(const p of G.pipes){p.x-=G.speed*dt;
-  if(!p.scored && p.x+p.w<b.x-r){p.scored=true;G.score++;audio(840,.09);missionProgress('pipes',1);addParticles(b.x,b.y,'#fff8a4',6);G.floatingCoins.push({x:b.x+33,y:b.y-15,life:.78});
+  if(!p.scored && p.x+p.w<b.x-r){p.scored=true;G.score++;audio(840,.09);missionProgress('pipes',1);addParticles(b.x,b.y,'#fff8a4',6);G.floatingCoins.push({x:b.x+33,y:b.y-16,life:1.05,initialLife:1.05});if(!store.reduceFx)G.flash=.055;
    G.recentScores=(G.recentScores||[]).filter(t=>G.t-t<=5);G.recentScores.push(G.t);
    if(G.recentScores.length>=3){store.rocketeerRuns=(store.rocketeerRuns||0)+1;G.recentScores=[];persist();checkAchievements();}
    updateHud();if(G.score>0&&G.score%10===0)G.night=!G.night;}
@@ -662,8 +768,32 @@ function drawBird(){const b=G.bird,color=birdColor(),fluorescent=store.skin===FL
  ctx.fillStyle='#ff942e';ctx.beginPath();ctx.ellipse(-6,5+Math.sin(G.t*22)*2,8,6,-.3,0,Math.PI*2);ctx.fill();
  ctx.fillStyle='white';ctx.beginPath();ctx.ellipse(7,-5,6.5,7,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#1c3042';ctx.beginPath();ctx.arc(9,-5,3,0,Math.PI*2);ctx.fill();
  ctx.fillStyle='#ff8834';ctx.beginPath();ctx.moveTo(15,1);ctx.lineTo(26,4);ctx.lineTo(15,8);ctx.closePath();ctx.fill();ctx.restore();}
-function draw(){ctx.clearRect(0,0,W,H);drawBg();G.pipes.forEach(drawPipe);for(const p of G.particles){ctx.globalAlpha=clamp(p.life*2,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;drawBird();
- for(const c of G.floatingCoins){ctx.save();ctx.globalAlpha=clamp(c.life/.5,0,1);if(coinSprite.complete&&coinSprite.naturalWidth){ctx.drawImage(coinSprite,c.x-13,c.y-13,26,26);}else{ctx.fillStyle='#ffdb39';ctx.beginPath();ctx.arc(c.x,c.y,13,0,Math.PI*2);ctx.fill();}ctx.fillStyle='white';ctx.font='900 15px system-ui';ctx.textAlign='left';ctx.fillText('+1',c.x+15,c.y+5);ctx.restore();}}
+function draw(){
+ ctx.clearRect(0,0,W,H);ctx.save();
+ if(G.shake>0&&!store.reduceFx)ctx.translate((Math.random()-.5)*G.shake,(Math.random()-.5)*G.shake);
+ drawBg();G.pipes.forEach(drawPipe);
+ for(const p of G.particles){
+  ctx.save();ctx.globalAlpha=clamp(p.life/(p.initialLife||.5),0,1);ctx.fillStyle=p.color;
+  if(p.kind==='feather'){
+   ctx.translate(p.x,p.y);ctx.rotate(p.angle);
+   ctx.beginPath();ctx.ellipse(0,0,p.size*1.8,p.size*.75,-.35,0,Math.PI*2);ctx.fill();
+   ctx.strokeStyle='#fff6';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(-p.size,0);ctx.lineTo(p.size,0);ctx.stroke();
+  }else{ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}
+  ctx.restore();
+ }
+ drawBird();
+ for(const c of G.floatingCoins){
+  ctx.save();const ratio=clamp(c.life/(c.initialLife||1),0,1);
+  ctx.globalAlpha=Math.min(1,ratio*2);const scale=1+(1-ratio)*.20;
+  ctx.translate(c.x,c.y);ctx.scale(scale,scale);
+  if(coinSprite.complete&&coinSprite.naturalWidth){ctx.drawImage(coinSprite,-13,-13,26,26);}
+  else{ctx.fillStyle='#ffdb39';ctx.beginPath();ctx.arc(0,0,11,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle='#ffdb39';ctx.strokeStyle='#182b45';ctx.lineWidth=3;ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.font='900 22px system-ui';ctx.strokeText('+1',17,0);ctx.fillText('+1',17,0);ctx.restore();
+ }
+ ctx.restore();
+ if(G.flash>0&&!store.reduceFx){ctx.fillStyle=`rgba(255,255,255,${clamp(G.flash*1.9,0,.24)})`;ctx.fillRect(0,0,W,H);}
+}
 
 let lastFrame=0;function loop(ms){if(!lastFrame)lastFrame=ms;let dt=Math.min((ms-lastFrame)/1000,.034);lastFrame=ms;
  try{move(dt);draw();}catch(err){console.error('Erro no jogo:',err);toast('Erro inesperado. Toque em Menu para reiniciar.');}
@@ -691,7 +821,7 @@ function renderLive(){
  const active=!!live;
  $('liveSetup').hidden=active;
  $('liveRoomPanel').hidden=!active;
- $('liveNick').value=$('liveNick').value||store.nick||'';
+ $('liveNick').value=$('liveNick').value||store.liveNick||store.nick||'';
  if(!active){
   $('liveInfo').textContent=t(online?'liveInfo':'liveConfigNeeded');
   $('liveBoard').replaceChildren(makeText('p','subtle',t(online?'liveWaiting':'liveStatusOffline')));
@@ -749,7 +879,7 @@ async function createLiveRoom(){
  try{
   const f=fb,code=randomRoomCode();
   await f.setDoc(f.doc(f.db,'yelloww_live_rooms',code),{hostUid:fbUser.uid,hostName:name,status:'open',createdAt:f.serverTimestamp(),updatedAt:f.serverTimestamp()});
-  store.nick=name;persist();unsubscribeLive();
+  store.liveNick=name;persist();unsubscribeLive();
   live={code,host:true,unsubs:[],name};liveRows=[];
   await registerLiveScore(code,name,0);
   await trackLiveRoom(live);renderLive();toast(t('liveCreated',{code}));
@@ -766,7 +896,7 @@ async function joinLiveRoom(){
  try{
   const f=fb,snapshot=await f.getDoc(f.doc(f.db,'yelloww_live_rooms',code));
   if(!snapshot.exists()||snapshot.data().status!=='open'){toast(t('liveInvalidCode'));return;}
-  store.nick=name;persist();unsubscribeLive();
+  store.liveNick=name;persist();unsubscribeLive();
   live={code,host:snapshot.data().hostUid===fbUser.uid,unsubs:[],name};liveRows=[];
   await registerLiveScore(code,name,0);await trackLiveRoom(live);
   renderLive();toast(t('liveJoined',{code}));
@@ -828,6 +958,20 @@ $('btnLivePlay').addEventListener('click',start);
 $('btnRetry').addEventListener('click',start);
 $('btnMenu').addEventListener('click',menu);
 $('btnRanking').addEventListener('click',()=>showRanking('menu'));
+$('btnGlobalNick').addEventListener('click',async()=>{
+ const name=cleanNick($('globalNickInput').value);
+ if(!name){toast(t('needNick'));$('globalNickInput').focus();return;}
+ const btn=$('btnGlobalNick');btn.disabled=true;btn.textContent=t('globalNickUpdating');
+ try{
+  if(cloudStatus==='online'){
+   // Atualiza exclusivamente o documento global deste UID, preservando o maior score.
+   await saveOnlineScore(name,0);
+   store.nick=name;persist();toast(t('globalNickSaved'));
+  }else{store.nick=name;persist();toast(t('globalNickLocal'));}
+  await showRanking(rankSource);
+ }catch(err){console.warn('Falha ao atualizar apelido global:',err);toast(t('globalNickError'));}
+ finally{btn.disabled=false;btn.textContent=t('globalNickSave');}
+});
 $('btnAchievements').addEventListener('click',showAchievements);
 $('btnBackAch').addEventListener('click',menu);
 $('btnShop').addEventListener('click',()=>{G.screen='shop';setScreen('shop');renderShop();});
@@ -908,7 +1052,10 @@ function drawShareCard(){
  c.fillStyle='#ffdb39';c.font='700 35px system-ui, Arial';c.fillText(language==='en'?'CAN YOU BEAT MY SCORE?':'VOCÊ CONSEGUE ME SUPERAR?',450,1030,790);
  c.fillStyle='#c9d8ee';c.font='500 22px system-ui, Arial';c.fillText(language==='en'?'Play on Telegram or your browser':'Jogue pelo Telegram ou pelo navegador',450,1093,800);
  c.fillStyle='#aabbd3';c.font='500 22px system-ui, Arial';const shareUrlText=SHARE_URL.replace(/^https?:\/\//,'').replace(/\/$/,'/');
- c.fillText(shareUrlText,450,1138);
+ c.fillText(shareUrlText,450,1130);
+  const rank=getRank(Math.max(store.best,G.score));
+  c.fillStyle='#ffdb39';c.font='800 23px system-ui, Arial';
+  c.fillText(`${rank.icon} ${language==='en'?'RANK':'PATENTE'}: ${t('rank'+rank.threshold)}`,450,1174,820);
  return cv;
 }
 function shareMessage(){return t('shareMessage',{score:G.score,url:SHARE_URL});}
